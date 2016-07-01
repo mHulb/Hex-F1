@@ -366,6 +366,7 @@ class HexBoard:
         self.winning_player = None
         self.is_finished = False
         self.last_move = None
+        self.victory_path = None
 
     def finished(self):
         return self.is_finished
@@ -406,7 +407,9 @@ class HexBoard:
                 stack.extend([n for n in node.neighbours
                               if n not in visited and n.colour == colour])
 
-        return self.__connects_both_sides(visited, colour)
+        if self.__connects_both_sides(visited, colour):
+            self.victory_path = visited
+            return True
 
     def __connects_both_sides(self, subgraph, colour):
         """
@@ -460,10 +463,9 @@ class HexBoard:
 
     def getVictorPath(self):
         """
-        TODO aus Aufgabenstellung:
-        soll eine Verbindungsstrecke zwischen zwei Seiten des Spielbretts
-        zurückgeben, die als Zertifikat für das Ende des Spiels dient.
+        Returns the victory path.
         """
+        return self.victory_path
 
 
 class Game():
