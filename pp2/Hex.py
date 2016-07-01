@@ -50,7 +50,7 @@ class HexGui(object):
         self.tile_hover = theme["tile_hover"]
         self.game = game
         self.last_field = None
-        #self.round = 0
+        # self.round = 0
         self.size = (m, n)
         # Saves for every Hexagon the points
         self.point_coordinates = [[[0 for i in range(12)]
@@ -344,6 +344,14 @@ class HexGui(object):
                                fg=self.tile,
                                bg=self.blue, )
 
+    def showVictoryPath(self):
+        """
+        TODO aus Aufgabenstellung:
+        showVictoryPath soll mit Hilfe der Methode getVictoryPath der
+        Klasse HexBoard eine Verbindungsstrecke visualisieren, die das
+        Spielende darstellt.
+        """
+
 
 class HexBoard:
     """
@@ -450,6 +458,13 @@ class HexBoard:
                 if i > 0 and j < m - 1:
                     node.neighbours.append(self.nodes[i - 1][j + 1])
 
+    def getVictorPath(self):
+        """
+        TODO aus Aufgabenstellung:
+        soll eine Verbindungsstrecke zwischen zwei Seiten des Spielbretts
+        zurückgeben, die als Zertifikat für das Ende des Spiels dient.
+        """
+
 
 class Game():
 
@@ -510,7 +525,54 @@ class Game():
                     # In test mode, endscreen remains open until closed
                     self.gui.master.mainloop()
 
-#A = Game(10,10,"human","dark")
+    def getBoard(self):
+        """
+        TODO aus Aufgabenstellung:
+        soll den derzeitigen Status des Spielbretts in Form von board (siehe
+        readBoard) zuruckgeben. Ein board ist dabei eine geschachtelte
+        m × n Liste, also mit m Zeilen und n Spalten; die Felder sind dabei
+        mit 0 (nicht belegt), 1 (belegt von Spieler 1) oder 2 (belegt von
+        Spieler 2) befullt. Ist die Anzahl der belegten Felder gerade,
+        soll 1 ziehen, andernfalls 2. Hierbei muss 1 einen Pfad von links
+        nach rechts und 2 einen Pfad von unten nach oben aufbauen.
+
+        """
+
+
+class HexKI:
+    """
+    HexKI: Implements an AI opponent.
+    """
+
+    def __init__(self, m, n):
+        """
+        """
+        pass
+
+    def chooseOrder(self, firstmove):
+        """
+        """
+        pass
+
+    def calculateMove(self):
+        """
+        """
+        pass
+
+    def nextMove(self):
+        """
+        """
+        pass
+
+    def receiveMove(self, move):
+        """
+        """
+        pass
+
+    def readBoard(self, board, current=True):
+        """
+        """
+        pass
 
 if __name__ == "__main__":
 
@@ -521,7 +583,7 @@ if __name__ == "__main__":
 
     # Mode for human vs. human
     if mode == "human":
-        n,m = 0,0
+        n, m = 0, 0
         while n < 2 or m < 2:
             dim = input("Please enter dimensions (min 2) (n m): ")
             n, m = int(dim.split(" ")[0]), int(dim.split(" ")[1])
@@ -551,4 +613,3 @@ if __name__ == "__main__":
 
     else:
         print("Gamemode {} is not available.".format(mode))
-
