@@ -9,7 +9,7 @@ class Node:
     """
 
     def __init__(self, i, j):
-        self.colour = None
+        self.colour = 0
         self.neighbours = []
         self.i = i
         self.j = j
@@ -22,7 +22,7 @@ class Node:
 
     def string_rep(self):
         # string_rep for testing without GUI
-        if not self.colour:
+        if self.colour == 0:
             return "[ ]"
         elif self.colour == 1:  # red
             return "[X]"

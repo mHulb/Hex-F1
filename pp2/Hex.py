@@ -467,6 +467,9 @@ class HexBoard:
         """
         return self.victory_path
 
+    def showBoard(self):
+        return [[n.colour for n in row] for row in self.nodes]
+
 
 class Game():
 
@@ -539,6 +542,7 @@ class Game():
         nach rechts und 2 einen Pfad von unten nach oben aufbauen.
 
         """
+        return self.board.showBoard()
 
 
 class HexKI:
