@@ -16,21 +16,24 @@ COLOR_THEMES = {"standard":
                  "bg": "#eeeeee",
                  "tile": "#dca256",
                  "tile_hover": "#e5b980",
-                 "tile_outline": "#654a27"},
+                 "tile_outline": "#654a27",
+                 "victory": "yellow"},
                 "b/w":
                 {"color_1": "#282828",
                  "color_2": "white",
                  "bg": "#676767",
                  "tile": "#dca256",
                  "tile_hover": "#e5b980",
-                 "tile_outline": "#654a27"},
+                 "tile_outline": "#654a27",
+                 "victory": "yellow"},
                 "dark":
                 {"color_1": "#8eaee3",
                  "color_2": "#f8c083",
                  "bg": "#676767",
                  "tile": "#555555",
                  "tile_hover": "#666666",
-                 "tile_outline": "#111111"},
+                 "tile_outline": "#111111",
+                 "victory": "yellow"},
                 }
 
 
@@ -48,6 +51,7 @@ class HexGui(object):
         self.tile = theme["tile"]
         self.tile_outline = theme["tile_outline"]
         self.tile_hover = theme["tile_hover"]
+        self.victory_color = theme["victory"]
         self.game = game
         self.last_field = None
         # self.round = 0
@@ -351,6 +355,14 @@ class HexGui(object):
         Klasse HexBoard eine Verbindungsstrecke visualisieren, die das
         Spielende darstellt.
         """
+        victory_path = self.game.board.getVictoryPath()
+        for node in victory_path:
+            self.w.create_polygon(
+                list(self.point_coordinates[node.i][node.j]),
+                outline=self.tile_outline,
+                fill=self.victory_color,
+                width=3)
+
 
 
 class HexBoard:
@@ -461,7 +473,7 @@ class HexBoard:
                 if i > 0 and j < m - 1:
                     node.neighbours.append(self.nodes[i - 1][j + 1])
 
-    def getVictorPath(self):
+    def getVictoryPath(self):
         """
         Returns the victory path.
         """
@@ -524,6 +536,7 @@ class Game():
             if self.board.finished():
                 print("Player {} has won!".format(self.board.winner()))
                 self.gui.finish(self.board.winner())
+                self.gui.showVictoryPath()
                 self.gui.master.update()
 
                 if self.mode == "test":
@@ -579,6 +592,9 @@ class HexKI:
         """
         """
         pass
+
+
+#A = Game(2,2,"human","dark")
 
 if __name__ == "__main__":
 
