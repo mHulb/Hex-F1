@@ -355,9 +355,14 @@ class HexGui(object):
         Klasse HexBoard eine Verbindungsstrecke visualisieren, die das
         Spielende darstellt.
         """
+        victory_path = self.game.board.getVictoryPath()
+        for node in victory_path:
+            self.w.create_polygon(
+                list(self.point_coordinates[node.i][node.j]),
+                outline=self.tile_outline,
+                fill=self.victory_color,
+                width=3)
 
-        tmp = self.game.board.etVictorPath()
-        print(tmp)
 
 
 class HexBoard:
@@ -468,7 +473,7 @@ class HexBoard:
                 if i > 0 and j < m - 1:
                     node.neighbours.append(self.nodes[i - 1][j + 1])
 
-    def getVictorPath(self):
+    def getVictoryPath(self):
         """
         Returns the victory path.
         """
@@ -531,6 +536,7 @@ class Game():
             if self.board.finished():
                 print("Player {} has won!".format(self.board.winner()))
                 self.gui.finish(self.board.winner())
+                self.gui.showVictoryPath()
                 self.gui.master.update()
 
                 if self.mode == "test":
@@ -588,7 +594,7 @@ class HexKI:
         pass
 
 
-A = Game(5,5,"human","dark")
+A = Game(2,2,"human","dark")
 
 if __name__ == "__main__":
 
