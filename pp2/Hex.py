@@ -16,21 +16,24 @@ COLOR_THEMES = {"standard":
                  "bg": "#eeeeee",
                  "tile": "#dca256",
                  "tile_hover": "#e5b980",
-                 "tile_outline": "#654a27"},
+                 "tile_outline": "#654a27",
+                 "victory": "yellow"},
                 "b/w":
                 {"color_1": "#282828",
                  "color_2": "white",
                  "bg": "#676767",
                  "tile": "#dca256",
                  "tile_hover": "#e5b980",
-                 "tile_outline": "#654a27"},
+                 "tile_outline": "#654a27",
+                 "victory": "yellow"},
                 "dark":
                 {"color_1": "#8eaee3",
                  "color_2": "#f8c083",
                  "bg": "#676767",
                  "tile": "#555555",
                  "tile_hover": "#666666",
-                 "tile_outline": "#111111"},
+                 "tile_outline": "#111111",
+                 "victory": "yellow"},
                 }
 
 
@@ -48,6 +51,7 @@ class HexGui(object):
         self.tile = theme["tile"]
         self.tile_outline = theme["tile_outline"]
         self.tile_hover = theme["tile_hover"]
+        self.victory_color = theme["victory"]
         self.game = game
         self.last_field = None
         # self.round = 0
@@ -352,6 +356,9 @@ class HexGui(object):
         Spielende darstellt.
         """
 
+        tmp = self.game.board.etVictorPath()
+        print(tmp)
+
 
 class HexBoard:
     """
@@ -579,6 +586,9 @@ class HexKI:
         """
         """
         pass
+
+
+A = Game(5,5,"human","dark")
 
 if __name__ == "__main__":
 
