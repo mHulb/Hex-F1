@@ -594,7 +594,7 @@ class HexKI:
         pass
 
 
-A = Game(2,2,"human","dark")
+#A = Game(2,2,"human","dark")
 
 if __name__ == "__main__":
 
