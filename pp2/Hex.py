@@ -566,7 +566,10 @@ class HexKI:
     def __init__(self, m, n):
         """
         """
-        pass
+        self.board = [[Node(i, j) for j in range(m)] for i in range(n)]
+        self.size = (n,m)
+        self.best_move = None
+
 
     def chooseOrder(self, firstmove):
         """
@@ -576,23 +579,42 @@ class HexKI:
     def calculateMove(self):
         """
         """
-        pass
+        self.betst_move = self.__random_move()
+        return True
+
 
     def nextMove(self):
         """
         """
-        pass
+
+        return self.best_move
+
 
     def receiveMove(self, move):
         """
         """
-        pass
+        self.board[move[0]][move[1]].colour = 1
+
 
     def readBoard(self, board, current=True):
         """
         """
         pass
 
+    def __random_move(self):
+        while True:
+            i = random.randint(0,self.size[0])
+            j = random.randint(0,self.size[1])
+
+            if self.board[i][j].colour == 0:
+                return (i , j)
+
+
+Board = HexKI(10,10)
+print(Board.board[00][00])
+for i in range(10):
+    Board.calculateMove()
+    Board.receiveMove(Board.nextMove())
 
 #A = Game(2,2,"human","dark")
 
