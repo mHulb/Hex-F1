@@ -4,7 +4,7 @@ import math
 import random
 from helpers import Node
 from time import sleep
-
+from Kis import KI
 
 """
 Hex Game
