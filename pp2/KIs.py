@@ -1,3 +1,6 @@
+import time
+import random
+
 
 class KI(object):
     '''
@@ -20,12 +23,20 @@ class KI(object):
     def calculateMove(self):
         """
         """
-        maxi = 0
+        maxi = -1
+        # bei all moves kann man vll noch etwas aussieben. Gerade die Spitzen
+        # other_moves durch gehen und schauen ob eins der toten muster drin ist
+        # wenn ja dann loesche die freien felder, dann werden sie nie mit durchsucht!
+        n = self.n
+        if len(self.my_moves) == 0:
+            all_moves = set([(i,j) for i in range(1,n-1) for j in range(1,n-1)])
+        else:
+            all_moves = self.all_moves
 
-        for s in self.all_moves:
+        for s in all_moves:
             tmp_state = self.my_moves[:]
             tmp_state.append(s)
-            a = self.max_value(tmp_state,self.other_moves,-float("inf"),float("inf"),3)
+            a = self.max_value(tmp_state,self.other_moves,-float("inf"),float("inf"),4)
             if a > maxi:
                 maxi = a
                 self.best_move = s
@@ -78,7 +89,6 @@ class KI(object):
         return False
 
     def max_value(self, my_moves,other_moves, a, b, depth):
-
         if (depth == 0):
             return self.value(my_moves,other_moves)
         # da wir nichts ande den self.variablen aender wollen, Suche nur in tmp variablen
@@ -120,11 +130,39 @@ class KI(object):
         # lets try what happens
         l = self.ZHK(my)
         b = self.bridge_count(my,ot)
-        w1,w2 = 4,1
-        val = w1*l + w2*b
+        o = self.on_the_line(my)
+        #print (l,b,o)
+        w1,w2,w3 = 10,1,7
+        val = w1*l + w2*b + w3*o
         return val
 
-    def ZHK(self,tupls):
+    def on_the_line(self,my):
+        """
+        how close is it to se midle line
+        :param my: list with own moves
+        :return: int value
+        """
+        all = []
+        mean = 0
+        for elm in my:
+            su = elm[0] + elm[1]
+            all.append(abs(self.n-1 - su))
+        if len(all)>0:
+            mean = sum(all)/len(all)
+            return 10 - mean
+        else:
+            return 1
+        #     all.append(su)
+        # if len(all) > 0:
+        #     mean = sum(all)/len(my)*1.
+        # if mean == self.n:
+        #     return 1
+        # else:
+        #     return ((abs(self.n-1 - mean)+1))
+
+
+    def ZHK(self,my):
+        tupls = my[:]
         zhk = []
         indis = []
         l = range(len(tupls))
@@ -137,12 +175,23 @@ class KI(object):
                         t.append(s)
             zhk.append(t)
         l = 0
+        wining = 0
+        for el in zhk:
+            for tup in el:
+                if tup[1] == 0:
+                    wining += 1
+                if tup[1] == self.n-1:
+                    wining += 1
+            if wining == 2:
+                return 100
 
         for el in zhk:
             l = max(l,len(el))
         return l
 
-    def bridge_count(self,my,ot):
+    def bridge_count(self,my_in,ot_in):
+        my = my_in[:]
+        ot = ot_in[:]
         l = len(my)
         count = 0
         for i in range(l):
@@ -151,18 +200,36 @@ class KI(object):
                 count +=1
         return count
 
+    def random_move(self):
+        while True:
+            i = random.randint(0,self.n)
+            j = random.randint(0,self.n)
 
-a = KI(5)
+            if (i,j) in self.all_moves:
+                return (i,j)
 
-a.receiveMove((3,3))
-a.best_move = (2,2)
+
+
+def prin(my,ot,n):
+    board = [[0 for i in range(n)] for j in range(n)]
+    for el in my:
+        board[el[0]][el[1]] = 1
+    for el in ot:
+        board[el[0]][el[1]] = 2
+    output = ""
+    for i, row in enumerate(board):
+        output += i * " " + " ".join(str(el) for el in row) + "\n"
+    print (output)
+
+
+a = KI(4)
+a.best_move = (2,1)
 a.nextMove()
-a.receiveMove((4,3))
-a.calculateMove()
-a.nextMove()
-a.receiveMove((5,1))
-a.calculateMove()
-a.nextMove()
-a.receiveMove((3,1))
-a.calculateMove()
-a.nextMove()
+for k in range(7):
+    a.receiveMove(a.random_move())
+    t0 = time.clock()
+    a.calculateMove()
+    print(time.clock() -t0)
+    a.nextMove()
+    prin(a.my_moves,a.other_moves,4)
+prin(a.my_moves,a.other_moves,4)
