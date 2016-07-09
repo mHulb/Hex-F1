@@ -17,15 +17,17 @@ COLOR_THEMES = {"standard":
                  "tile": "#dca256",
                  "tile_hover": "#e5b980",
                  "tile_outline": "#654a27",
-                 "victory": "yellow"},
+                 "victory_1": "#e08877",
+                 "victory_2": "#9bb4e0"},
                 "b/w":
                 {"color_1": "#282828",
-                 "color_2": "white",
+                 "color_2": "#ffffff",
                  "bg": "#676767",
                  "tile": "#dca256",
                  "tile_hover": "#e5b980",
                  "tile_outline": "#654a27",
-                 "victory": "yellow"},
+                 "victory_1": "#686868",
+                 "victory_2": "#fff392"},
                 "dark":
                 {"color_1": "#8eaee3",
                  "color_2": "#f8c083",
@@ -33,7 +35,8 @@ COLOR_THEMES = {"standard":
                  "tile": "#555555",
                  "tile_hover": "#666666",
                  "tile_outline": "#111111",
-                 "victory": "yellow"},
+                 "victory_1": "#b7c0d0",
+                 "victory_2": "#ffe1c1"},
                 }
 
 
@@ -45,13 +48,12 @@ class HexGui(object):
     def __init__(self, m, n, game, color_theme="standard"):
         theme = COLOR_THEMES[color_theme]
         # set colors from theme
-        self.red = theme["color_1"]
-        self.blue = theme["color_2"]
+        self.color = {1: theme["color_1"], 2: theme["color_2"]}
+        self.victory = {1: theme["victory_1"], 2: theme["victory_2"]}
         self.bg = theme["bg"]
         self.tile = theme["tile"]
         self.tile_outline = theme["tile_outline"]
         self.tile_hover = theme["tile_hover"]
-        self.victory_color = theme["victory"]
         self.game = game
         self.last_field = None
         # self.round = 0
@@ -67,16 +69,12 @@ class HexGui(object):
         self.master.configure(background=self.bg)
         self.player = game.currentPlayer()
         # set color and name from player label
-        if self.player == 1:
-            self.lab = Label(self.master,
-                             text="Spieler 2 ist am Zug",
-                             fg=self.tile,
-                             bg=self.red,)
-        else:
-            self.lab = Label(self.master,
-                             text="Spieler 1 ist am Zug",
-                             fg=self.tile,
-                             bg=self.blue,)
+        self.lab = Label(
+            self.master,
+            text="Spieler {} ist am Zug".format(self.game.currentPlayer()),
+            fg=self.tile,
+            bg=self.color[self.game.currentPlayer()])
+
         self.lab.pack()
         # creates board with hexagons
         self.__create_board()
@@ -198,8 +196,8 @@ class HexGui(object):
         Colours the top und botten outline side of the Hexagon field in red
         and the left and right outline side in blue
         """
-        left = self.blue
-        top = self.red
+        left = self.color[2]
+        top = self.color[1]
         m = self.size[0] - 1
         n = self.size[1] - 1
         line_width = 3
@@ -279,17 +277,7 @@ class HexGui(object):
         colored. If its the first move, Player 2 is asked if he/she wants
         to play with the first move.
         """
-        # color sets for the field
-        if self.game.currentPlayer() == 1:
-            player_color = self.red
-            self.lab.configure(text="Spieler 1 ist am Zug",
-                               fg=self.tile,
-                               bg=self.blue, )
-        else:  # if player == 2
-            player_color = self.blue
-            self.lab.configure(text="Spieler 2 ist am Zug",
-                               fg=self.tile,
-                               bg=self.red, )
+
         # colors the field which is clicked/selected
         j, i = move[0], move[1]
         if self.field_array[j][i] == 0:
@@ -297,7 +285,9 @@ class HexGui(object):
             self.field_array[j][i] = 1
             latest_poly = self.w.create_polygon(
                 list(self.point_coordinates[j][i]),
-                outline=self.tile_outline, fill=player_color, width=3)
+                outline=self.tile_outline,
+                fill=self.color[self.game.currentPlayer()],
+                width=3)
             self.last_field = None
 
         # Swap rule at first turn
@@ -307,6 +297,15 @@ class HexGui(object):
             self.w.delete(latest_poly)
             self.receiveMove(move)
             self.game.round = 1
+
+        # updates the top label to show the next player's move
+        self.lab.configure(
+            text="Spieler {} ist am Zug".format(self.game.nextPlayer()),
+            fg=self.tile,
+            bg=self.color[self.game.nextPlayer()])
+
+    def __color(self, player):
+        return self.color[player]
 
     def setFirst(self):
         """
@@ -339,14 +338,11 @@ class HexGui(object):
         """
         If the Game is finished, the player label is updated with the winner
         """
-        if player == 1:
-            self.lab.configure(text="Spieler 1 hat gewonnen",
-                               fg=self.tile,
-                               bg=self.red, )
-        else:  # if player == 2
-            self.lab.configure(text="Spieler 2 hat gewonnen",
-                               fg=self.tile,
-                               bg=self.blue, )
+
+        self.lab.configure(
+            text="Spieler {} hat gewonnen!".format(self.game.nextPlayer()),
+            fg=self.tile,
+            bg=self.color[self.game.nextPlayer()])
 
     def showVictoryPath(self):
         """
@@ -356,13 +352,14 @@ class HexGui(object):
         Spielende darstellt.
         """
         victory_path = self.game.board.getVictoryPath()
+        victory_color = self.victory[self.game.nextPlayer()]
+
         for node in victory_path:
             self.w.create_polygon(
                 list(self.point_coordinates[node.i][node.j]),
                 outline=self.tile_outline,
-                fill=self.victory_color,
+                fill=victory_color,
                 width=3)
-
 
 
 class HexBoard:
@@ -507,18 +504,17 @@ class Game():
 
     # Spieler durch 1 und 2 festgelegt
     def changePlayer(self):
-        if self.cur_player == 1:
-            self.cur_player = 2
-        else:
-            self.cur_player = 1
+        self.cur_player = self.nextPlayer()
 
     def chooseFirst(self):
         # wähle zufällig ersten Spieler aus
-        s = [1, 2]
-        return random.choice(s)
+        return random.choice([1, 2])
 
     def currentPlayer(self):
         return self.cur_player
+
+    def nextPlayer(self):
+        return self.cur_player % 2 + 1
 
     # Spielfeld wird aktualisiert
     # nach Spielzug wird Spieler am Zug geändert
@@ -567,9 +563,8 @@ class HexKI:
         """
         """
         self.board = [[Node(i, j) for j in range(m)] for i in range(n)]
-        self.size = (n,m)
+        self.size = (n, m)
         self.best_move = None
-
 
     def chooseOrder(self, firstmove):
         """
@@ -579,9 +574,8 @@ class HexKI:
     def calculateMove(self):
         """
         """
-        self.betst_move = self.__random_move()
+        self.best_move = self.__random_move()
         return True
-
 
     def nextMove(self):
         """
@@ -589,12 +583,10 @@ class HexKI:
 
         return self.best_move
 
-
     def receiveMove(self, move):
         """
         """
         self.board[move[0]][move[1]].colour = 1
-
 
     def readBoard(self, board, current=True):
         """
@@ -603,20 +595,20 @@ class HexKI:
 
     def __random_move(self):
         while True:
-            i = random.randint(0,self.size[0])
-            j = random.randint(0,self.size[1])
+            i = random.randint(0, self.size[0])
+            j = random.randint(0, self.size[1])
 
             if self.board[i][j].colour == 0:
-                return (i , j)
+                return (i, j)
 
-
-Board = HexKI(10,10)
+"""
+Board = HexKI(10, 10)
 print(Board.board[00][00])
 for i in range(10):
     Board.calculateMove()
     Board.receiveMove(Board.nextMove())
-
-#A = Game(2,2,"human","dark")
+"""
+# A = Game(2,2,"human","dark")
 
 if __name__ == "__main__":
 
