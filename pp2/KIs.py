@@ -225,7 +225,7 @@ def prin(my,ot,n):
 a = KI(4)
 a.best_move = (2,1)
 a.nextMove()
-for k in range(7):
+for k in range(8):
     a.receiveMove(a.random_move())
     t0 = time.clock()
     a.calculateMove()
