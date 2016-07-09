@@ -1,10 +1,6 @@
-<<<<<<< HEAD
+
 import time
 import random
-=======
-from math import random
->>>>>>> 92cbe2a63984cc36bc3733a642f88fa002dddec6
-
 
 class KI(object):
     '''
@@ -17,13 +13,9 @@ class KI(object):
         self.n = n
         self.best_move = None
         # save all posible moves, so we dont have to calculate them every move
-<<<<<<< HEAD
-        self.all_moves = set([(i,j) for i in range(n) for j in range(n)])
-
-=======
         self.all_moves = set((i, j) for i in range(n) for j in range(n))
         print(self.all_moves)
->>>>>>> 92cbe2a63984cc36bc3733a642f88fa002dddec6
+
 
     def chooseOrder(self, firstmove):
         """
@@ -66,7 +58,7 @@ class KI(object):
         """
         self.other_moves.append(move)
 
-<<<<<<< HEAD
+
     def is_nachbar(self,move,ZHK):
         # ZHK [(1,1),(2,1),(1,3)]
         for el in ZHK:
@@ -97,26 +89,6 @@ class KI(object):
                     return True
         return False
 
-    def max_value(self, my_moves,other_moves, a, b, depth):
-        if (depth == 0):
-            return self.value(my_moves,other_moves)
-        # da wir nichts ande den self.variablen aender wollen, Suche nur in tmp variablen
-=======
-    def readBoard(self, board, current=True):
-        """
-        Reads a given board. Updates my_moves, other_moves
-        and all possible moves
-        """
-        self.my_moves = []
-        self.other_moves = []
-        for i in range(board):
-            for j in range(board[0]):
-                if board[i][j] == 1:
-                    self.my_moves.append((i, j))
-                elif board[i][j] == 2:
-                    self.other_moves.append((i, j))
-        self.all_moves.difference(set(self.my_moves))
-        self.all_moves.difference(set(self.other_moves))
 
     def __random_move(self):
         while True:
@@ -130,7 +102,6 @@ class KI(object):
 
         if (depth == 0):
             return self.value(my_moves, other_moves)
->>>>>>> 92cbe2a63984cc36bc3733a642f88fa002dddec6
         all_moves = self.all_moves.copy()
         all_moves = all_moves.difference(set(my_moves))
         all_moves = all_moves.difference(set(other_moves))
@@ -161,7 +132,7 @@ class KI(object):
             return b
         return b
 
-<<<<<<< HEAD
+
     def value(self,my,ot):
         # laengste zusammenhangs komponente
         # kann man was blocken
@@ -273,13 +244,5 @@ for k in range(8):
     a.nextMove()
     prin(a.my_moves,a.other_moves,4)
 prin(a.my_moves,a.other_moves,4)
-=======
-    def value(self, my, othter):
-        return 1
 
-if __name__ == "__main__":
 
-    test = KI(3)
-    test.max_value(
-        test.my_moves, test.other_moves, float("-inf"), float("inf"), 4)
->>>>>>> 92cbe2a63984cc36bc3733a642f88fa002dddec6
