@@ -92,7 +92,11 @@ class AINode(Node):
         super().__init__(i, j)
         # default value for empty nodes is 1
         self.resistance_1 = 1 
-        self.resistance_2 = 1 
+        self.resistance_2 = 1
+
+        # möglicherweise unnötig die nochmal extra zu speichern
+        # vllt aber auch nützlich später
+        self.adjacent_edges = []
 
     def change_colour(self, colour):
         """
@@ -107,8 +111,12 @@ class AINode(Node):
         else: # if colour == 2
             self.resistance_1, self.resistance_2 = float("inf"), 0
 
+        # updates resistance of adjacent edges
+        for edge in self.adjacent_edges:
+            edge.update_resistances()
+
     def __str__(self):
-        return super().__repr__()
+        return "|({}, {}) {}|".format(self.i, self.j, super().__str__())
 
 class Edge():
     """
@@ -122,8 +130,8 @@ class Edge():
         self.resistance_2 = 2
 
     def update_resistances(self):
-        self.resistance_1 = v.resistance_1 + w.resistance_1
-        self.resistance_2 = v.resistance_2 + w.resistance_2
+        self.resistance_1 = self.v.resistance_1 + self.w.resistance_1
+        self.resistance_2 = self.v.resistance_2 + self.w.resistance_2
 
     def __contains__(self, node):
         return node in (self.v, self.w)
@@ -133,4 +141,5 @@ class Edge():
         return other.v in nodes and other.w in nodes
 
     def __repr__(self):
-        return "({})-({})".format(self.v, self.w)
+        return "({}--{}, 1: {}, 2: {})".format(
+            self.v, self.w, self.resistance_1, self.resistance_2)

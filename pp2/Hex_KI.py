@@ -20,14 +20,18 @@ class HexKI:
         self.opponent_colour = None
 
     def __make_edges(self, nodes):
-        edges = []
+        edges = [] # logisch gesehen wäre ein set wohl sinnvoller
         for row in nodes:
             for node in row:
                 for neighbour in node.neighbours:
                     # resistance default 2 for both sides
                     new_edge = Edge(node, neighbour)
                     if not new_edge in edges:
-                        edges.append(new_edge) 
+                        edges.append(new_edge)
+
+                        # das hier evtl unnötig, später gucken
+                        node.adjacent_edges.append(new_edge)
+                        neighbour.adjacent_edges.append(new_edge)
         return edges
 
     def __initialize_nodes(self, m, n):
@@ -83,7 +87,7 @@ class HexKI:
     def receiveMove(self, move):
         """
         """
-        self.board[move[0]][move[1]].colour = self.opponent_colour
+        self.nodes[move[0]][move[1]].change_colour(self.opponent_colour)
 
     def readBoard(self, board, current=True):
         """
