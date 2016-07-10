@@ -29,7 +29,7 @@ class HexKI:
         self.opponent_colour = None
 
     def __make_edges(self):
-        edges = [] # logisch gesehen wäre ein set wohl sinnvoller
+        edges = [] # logisch gesehen waere ein set wohl sinnvoller
         for row in self.nodes:
             for node in row:
                 for neighbour in node.neighbours:
@@ -91,7 +91,23 @@ class HexKI:
     def calculateMove(self):
         """
         """
-        self.best_move = self.__random_move()
+        nodes = self.nodes
+        edges = self.edges
+        moves = [(i,j) for i in range(self.n) for j in range(self.m)]
+        maxi = -1
+        for move in moves:
+            if nodes[move[0]][move[1]].colour == 0:
+                nodes[move[0]][move[1]].change_colour(self.player_colour)
+                a = self.max_value(nodes,edges,-float("inf"),float("inf"),3)
+                nodes[move[0]][move[1]].change_colour(0)
+                nodes[move[0]][move[1]].pot = 1
+
+                if a > maxi:
+                    maxi = a
+                    self.best_move = move
+
+
+        #self.best_move = self.__random_move()
         return True
 
     def evaluate(self, nodes=None, edges=None):
@@ -112,7 +128,7 @@ class HexKI:
     def nextMove(self):
         """
         """
-
+        self.nodes[self.best_move[0]][self.best_move[1]].colour = self.player_colour
         return self.best_move
 
     def receiveMove(self, move):
@@ -129,8 +145,41 @@ class HexKI:
 
     def __random_move(self):
         while True:
-            i = random.randint(0, self.size[0])
-            j = random.randint(0, self.size[1])
+            i = random.randint(0, self.m)
+            j = random.randint(0, self.n)
 
             if self.board[i][j].colour == 0:
                 return (i, j)
+
+    def max_value(self, nodes, edges , a, b, depth):
+
+        if (depth == 0):
+            return self.evaluate(nodes,edges)
+        moves = [(i, j) for i in range(self.n) for j in range(self.m)]
+        for move in moves:
+            if nodes[move[0]][move[1]].colour == 0:
+                nodes[move[0]][move[1]].change_colour(self.player_colour)
+                a = max(a, self.min_value(nodes, edges, a, b, depth - 1))
+                nodes[move[0]][move[1]].change_colour(0)
+                nodes[move[0]][move[1]].pot = 1
+
+        # this ia a cutoff point
+        if a >= b:
+             return a
+        return a
+
+    def min_value(self, nodes, edges , a, b, depth):
+        if (depth == 0):
+            return self.evaluate(nodes,edges)
+        moves = [(i, j) for i in range(self.n) for j in range(self.m)]
+        for move in moves:
+            if nodes[move[0]][move[1]].colour == 0:
+                nodes[move[0]][move[1]].change_colour(self.player_colour)
+                b = min(b, self.max_value(nodes, edges, a, b, depth - 1))
+                nodes[move[0]][move[1]].change_colour(0)
+                nodes[move[0]][move[1]].pot = 1
+
+        # this is a cutoff point
+        if b <= a:
+            return b
+        return b

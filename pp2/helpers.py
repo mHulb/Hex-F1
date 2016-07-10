@@ -104,8 +104,8 @@ class AINode(Node):
         # potential for dijkstra
         self.pot = float("inf")
 
-        # möglicherweise unnötig die nochmal extra zu speichern
-        # vllt aber auch nützlich später
+        # moeglicherweise unnoetig die nochmal extra zu speichern
+        # vllt aber auch nuetzlich spaeter
         self.adjacent_edges = []
 
     def change_colour(self, colour):
@@ -189,7 +189,7 @@ class Dijkstra():
     """
 
     # ! kann bestimmt noch optimiert werden, so dass wir nicht immer
-    # ! immer alle nodes durchsuchen müssen
+    # ! immer alle nodes durchsuchen muessen
     def __init__(self, nodes, edges, root, target):
         player_num = root.colour
         root.pot = 0
