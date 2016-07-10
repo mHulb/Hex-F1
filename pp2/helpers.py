@@ -18,7 +18,7 @@ class Node:
         return self.string_rep()
 
     def __repr__(self):
-        return "Node ({}, {}) ".format(self.i, self.j)
+        return "Node ({}, {})".format(self.i, self.j)
 
     def string_rep(self):
         # string_rep for testing without GUI
@@ -81,3 +81,56 @@ class Subgraph:
     def __repr__(self):
         return "{" + ", ".join(
             ["({}, {})".format(n.i, n.j) for n in self.nodes]) + "}"
+
+
+class AINode(Node):
+    """
+    Node implementation for the AI with expanded functionality.
+    """
+
+    def __init__(self, i, j):
+        super().__init__(i, j)
+        # default value for empty nodes is 1
+        self.resistance_1 = 1 
+        self.resistance_2 = 1 
+
+    def change_colour(self, colour):
+        """
+        Change a node's colour and update its resistance accordingly.
+        """
+        self.colour = colour
+
+        if colour == 0:  # empty
+            self.resistance_1, self.resistance_2 = 1, 1
+        elif colour == 1:
+            self.resistance_1, self.resistance_2 = 0, float("inf")
+        else: # if colour == 2
+            self.resistance_1, self.resistance_2 = float("inf"), 0
+
+    def __str__(self):
+        return super().__repr__()
+
+class Edge():
+    """
+    Class for an edge.
+    Connects nodes a and b and saves a resistance value for each player.
+    """
+    def __init__(self, v, w):
+        self.v = v
+        self.w = w
+        self.resistance_1 = 2
+        self.resistance_2 = 2
+
+    def update_resistances(self):
+        self.resistance_1 = v.resistance_1 + w.resistance_1
+        self.resistance_2 = v.resistance_2 + w.resistance_2
+
+    def __contains__(self, node):
+        return node in (self.v, self.w)
+
+    def __eq__(self, other):
+        nodes = (self.v, self.w)
+        return other.v in nodes and other.w in nodes
+
+    def __repr__(self):
+        return "({})-({})".format(self.v, self.w)
