@@ -103,6 +103,7 @@ class AINode(Node):
 
         # potential for dijkstra
         self.pot = float("inf")
+
         # saves adjacent edges for easy access
         self.adjacent_edges = []
 
@@ -187,7 +188,7 @@ class Dijkstra():
     """
 
     # ! kann bestimmt noch optimiert werden, so dass wir nicht immer
-    # ! immer alle nodes durchsuchen müssen
+    # ! immer alle nodes durchsuchen muessen
     def __init__(self, nodes, edges, root, target):
         player_num = root.colour
         heap = [root, target]

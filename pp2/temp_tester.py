@@ -1,16 +1,18 @@
 from Hex_KI import HexKI
 
 testKI = HexKI(3, 3)
-for edge in testKI.edges:
-    print(edge)
 testKI.player_colour = 1
 testKI.opponent_colour = 2
-print(testKI.evaluate())
+
+testKI.calculateMove()
+testKI.nextMove()
 
 testKI.opponent_colour = 2
 move = (1, 1)
 print("Make move {}".format(move))
 testKI.receiveMove((move))
+
+testKI.calculateMove()
 
 print(testKI.evaluate())
 
