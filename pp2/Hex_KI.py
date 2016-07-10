@@ -72,7 +72,7 @@ class HexKI:
         for node in self.nodes[n - 1]: # lower side
             node.neighbours.append(lower_bound)
             lower_bound.neighbours.append(node)
-            
+
         left_bound = self.boundaries[2][0]
         right_bound = self.boundaries[2][1]
         for row in self.nodes:
@@ -121,9 +121,16 @@ class HexKI:
 
         start_node = self.boundaries[self.player_colour][0]
         end_node = self.boundaries[self.player_colour][1]
-        # erstmal mit dijkstra versuchen
-        shortest_length = Dijkstra(nodes, edges, start_node, end_node)
-        return shortest_length.value
+        # Evaluate board with Dijkstra's algorithm.
+        board_eval_1 = Dijkstra(nodes, edges, start_node, end_node)
+        value_1 = board_eval_1.value
+
+        start_node = self.boundaries[self.opponent_colour][0]
+        end_node = self.boundaries[self.opponent_colour][1]
+        board_eval_2 = Dijkstra(nodes, edges, start_node, end_node)
+        value_2 = board_eval_2.value
+
+        return value_1 / value_2
 
     def nextMove(self):
         """
