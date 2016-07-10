@@ -1,4 +1,4 @@
-from helpers import AINode, Edge
+from helpers import AINode, Edge, Dijkstra
 import random
 
 
@@ -10,31 +10,44 @@ class HexKI:
     def __init__(self, m, n):
         """
         """
-        self.nodes = [[AINode(i, j) for j in range(m)] for i in range(n)]
-        self.__initialize_nodes(m, n)
-        self.edges = self.__make_edges(self.nodes)
         self.m = m  # number of rows
         self.n = n  # number of columns
+
+        self.nodes = [[AINode(i, j) for j in range(m)] for i in range(n)]
+
+        # boundary nodes have no indices, but a predefined colour (1 or 2)
+        self.boundaries = {1: [AINode(None, None, 1), AINode(None, None, 1)],
+                           2: [AINode(None, None, 2), AINode(None, None, 2)]}
+        for _, nodes in self.boundaries.items():
+            for node in nodes:
+                node.update_resistances()
+
+        self.__initialize_nodes(m, n)
+        self.edges = self.__make_edges()
         self.best_move = None
         self.player_colour = None
         self.opponent_colour = None
 
-    def __make_edges(self, nodes):
+    def __make_edges(self):
         edges = [] # logisch gesehen wäre ein set wohl sinnvoller
-        for row in nodes:
+        for row in self.nodes:
             for node in row:
                 for neighbour in node.neighbours:
-                    # resistance default 2 for both sides
+                    # resistance default value is 2 for both sides
                     new_edge = Edge(node, neighbour)
                     if not new_edge in edges:
                         edges.append(new_edge)
 
-                        # das hier evtl unnötig, später gucken
+                        # add edge to both nodes
                         node.adjacent_edges.append(new_edge)
                         neighbour.adjacent_edges.append(new_edge)
+
+        for edge in edges:
+            edge.update_resistances()
         return edges
 
     def __initialize_nodes(self, m, n):
+        # initializing the basic board nodes
         for i, row in enumerate(self.nodes):
             for j, node in enumerate(row):
                 if i > 0:
@@ -49,6 +62,26 @@ class HexKI:
                     node.neighbours.append(self.nodes[i + 1][j - 1])
                 if i > 0 and j < m - 1:
                     node.neighbours.append(self.nodes[i - 1][j + 1])
+
+        # initializing the boundary nodes
+        upper_bound = self.boundaries[1][0]
+        lower_bound = self.boundaries[1][1]
+        for node in self.nodes[0]: # upper side
+            node.neighbours.append(upper_bound)
+            upper_bound.neighbours.append(node)
+        for node in self.nodes[n - 1]: # lower side
+            node.neighbours.append(lower_bound)
+            lower_bound.neighbours.append(node)
+            
+        left_bound = self.boundaries[2][0]
+        right_bound = self.boundaries[2][1]
+        for row in self.nodes:
+            # leftmost side
+            row[0].neighbours.append(left_bound)
+            left_bound.neighbours.append(row[0])
+            # rightmost side
+            row[self.m - 1].neighbours.append(right_bound)
+            right_bound.neighbours.append(row[self.m - 1])
 
     def chooseOrder(self, firstmove):
         """
@@ -70,13 +103,11 @@ class HexKI:
         if not edges:
             edges = self.edges
 
-        """
-        !!! Hier eigentlich später nur nach jedem neuen zug das neueste updaten
-        anstatt alle edges neu zu berechnen.
-        """
-        for edge in edges:
-            edge.update_resistances()
-        
+        start_node = self.boundaries[self.player_colour][0]
+        end_node = self.boundaries[self.player_colour][1]
+        # erstmal mit dijkstra versuchen
+        shortest_length = Dijkstra(nodes, edges, start_node, end_node)
+        return shortest_length.value
 
     def nextMove(self):
         """
