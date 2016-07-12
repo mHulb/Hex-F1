@@ -92,10 +92,11 @@ class HexKI:
     def calculateMove(self):
         """
         """
+        
         # Kann spaeter geloescht werden, ist nur zum print da
         show_board = [["#" for i in range(self.n)] for j in range(self.m)]
         # Minimum fuer a intialisieren
-        mini = 1000
+        self.mini = 1000
         mo = {}
         nodes = self.nodes
 
@@ -146,8 +147,8 @@ class HexKI:
                     (mo.setdefault(a, [])).append((move[0], move[1]))
 
                     show_board[move[0]][move[1]] = round(a,3)
-                    if a < mini:
-                        mini = a
+                    if a < self.mini:
+                        self.mini = a
                         self.best_move = move
         self.moves = mo
         # Ausgabe der a Werte in Matrixform
@@ -231,8 +232,8 @@ class HexKI:
 
 
         # this ia a cutoff point
-        if a >= b:
-             return a
+        #if a <= b:
+        #     return a
         return a
 
     def min_value(self, nodes, a, b, depth):
@@ -251,7 +252,7 @@ class HexKI:
 
 
         # this is a cutoff point
-        if b <= a:
-            return b
+        #if b <= a:
+        #    return b
         return b
 
