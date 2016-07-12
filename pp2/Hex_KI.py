@@ -12,6 +12,7 @@ class HexKI:
         """
         self.m = m  # number of rows
         self.n = n  # number of columns
+        self.depth = 2
         self.first_move = 1
         self.nodes = [[AINode(i, j) for j in range(m)] for i in range(n)]
         # boundary nodes have no indices, but a predefined colour (1 or 2)
@@ -135,7 +136,7 @@ class HexKI:
                     # Daher tmporere nodes
                     nodes[move[0]][move[1]].change_colour(self.player_colour)
                     # theoretisch muesste hier min_value aufgerufen werden
-                    a = self.min_value(nodes, float("inf"), -float("inf"), 2)
+                    a = self.min_value(nodes, -float("inf"), float("inf"), self.depth)
                     # wieder zurueck setzten, damit es beim naechsten move nicht
                     # stoert
                     nodes[move[0]][move[1]].change_colour(0)
@@ -173,6 +174,7 @@ class HexKI:
         board_eval_2 = Dijkstra(nodes, start_node, end_node)
         value_2 = board_eval_2.value
         if value_1 == 0:
+            self.depth = 1
             return 0
         elif value_2 == 0:
             return float("inf")
@@ -222,14 +224,14 @@ class HexKI:
                     nodes[move[0]][move[1]].change_colour(self.player_colour)
 
 
-                    a = min(a, self.min_value(nodes, a, b, depth - 1))
+                    a = max(a, self.min_value(nodes, a, b, depth - 1))
 
                     nodes[move[0]][move[1]].change_colour(0)
                     nodes[move[0]][move[1]].pot = 1
 
 
         # this ia a cutoff point
-        if a <= b:
+        if a >= b:
              return a
         return a
 
@@ -243,13 +245,13 @@ class HexKI:
                 if nodes[move[0]][move[1]].colour == 0:
                     nodes[move[0]][move[1]].change_colour(self.opponent_colour)
 
-                    b = max(b, self.max_value(nodes, a, b, depth - 1))
+                    b = min(b, self.max_value(nodes, a, b, depth - 1))
                     nodes[move[0]][move[1]].change_colour(0)
                     nodes[move[0]][move[1]].pot = 1
 
 
         # this is a cutoff point
-        if b >= a:
+        if b <= a:
             return b
         return b
 
