@@ -5,6 +5,21 @@ testKI.player_colour = 1
 testKI.opponent_colour = 2
 
 
+
+# testKI.best_move = (0,0)
+# testKI.nextMove()
+# testKI.best_move = (1,0)
+# testKI.nextMove()
+#
+# testKI.calculateMove()
+
+
+# testKI.best_move = (0,2)
+# testKI.nextMove()
+# testKI.calculateMove()
+#
+# testKI.best_move = (0,3)
+# testKI.nextMove()
 for i in range(10):
     testKI.receiveMove(testKI.random_move())
     testKI.calculateMove()
