@@ -549,7 +549,6 @@ class Game():
         Spieler 2) befullt. Ist die Anzahl der belegten Felder gerade,
         soll 1 ziehen, andernfalls 2. Hierbei muss 1 einen Pfad von links
         nach rechts und 2 einen Pfad von unten nach oben aufbauen.
-
         """
         return self.board.showBoard()
 
