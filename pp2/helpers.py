@@ -194,7 +194,7 @@ class Dijkstra():
 
     # ! kann bestimmt noch optimiert werden, so dass wir nicht immer
     # ! immer alle nodes durchsuchen muessen
-    def __init__(self, nodes, edges, root, target):
+    def __init__(self, nodes, root, target):
         player_num = root.colour
         heap = [root, target]
         # convert all nodes to one single list in heap
