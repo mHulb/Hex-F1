@@ -8,74 +8,13 @@ class Node():
         self.parrent = None
 
 
-class MinHeap():
-    def __init__(self, nodes):
-        self.knoten = nodes[:]
-        # build-heap
-        # print("Knoten Ursprung")
-        # for k in nodes:
-        #    print(k.name, k.key, end="  ")
-        # print()
-        # print("Heap aufbauen:")
-        for i in reversed(range(0, int(len(self.knoten) / 2 + 1))):
-            #    print("grad fuer", i)
-            self.minHeapify(self.knoten, i)
-            # print("HEAP FERTIG!")
-            # for k in self.knoten:
-            #    print(k.name, k.key, end="    ")
-            # print()
-
-    def minHeapify(self, array, i):
-        # print("Heapify")
-        left = 2 * i + 1
-        right = 2 * i + 2
-        n = len(array) - 1
-        # print("vor aenderung:")
-        # for k in array:
-        #    print(k.name, k.key, end="    ")
-        # print()
-        # print("links:", left, "rechts:", right, "i:", i)
-        if left <= n and array[left].key < array[i].key:
-            # print("Bed 1")
-            smallest = left
-        else:
-            # print("Bed 2")
-            smallest = i
-        if right <= n and array[right].key < array[smallest].key:
-            # print("Bed 3")
-            smallest = right
-        if not (smallest == i):
-            placeholder = array[i]
-            array[i] = array[smallest]
-            array[smallest] = placeholder
-            self.minHeapify(array, smallest)
-
-    def isEmpty(self):
-        return (len(self.knoten) == 0)
-
-    def extractMin(self):
-        vorn = self.knoten[0]
-        if len(self.knoten) > 1:
-            self.knoten[0] = self.knoten[len(self.knoten) - 1]
-        self.knoten.pop()
-        self.minHeapify(self.knoten, 0)
-        # print("Laenge:", len(self.knoten))
-        return (vorn)
-
-    def decreaseKey(self, knotenV, wert):
-        knotenV.key = wert
-        # self.minHeapify(self.knoten, 0)
-        for i in reversed(range(0, int(knotenV.name / 2 + 1))):
-            #    print("grad fuer", i)
-            self.minHeapify(self.knoten, i)
-        return (None)
 
 
 class KI(object):
 
     def __init__(self,n):
         self.n = n
-        self.nnodes = n**2 +2
+        self.nnodes = n**2 +1
         self.nodes = [Node(i) for i in range(self.nnodes)]
         # Start Knoten
         self.root = 0
@@ -103,9 +42,11 @@ class KI(object):
                 #     maxi = a
                 #     self.best_move = s
     def value(self,adj):
-        val = self.shortest_path_potentials(adj)
-
-        return val
+        self.shortest_path_potentials(adj)
+        mini = 1000
+        for i in range(self.n**2-self.n+1, self.n**2+1):
+            mini = min(mini,self.nodes[i].key)
+        return mini
 
 
 
@@ -164,7 +105,7 @@ class KI(object):
             # linker Rand
             if not v % self.n == 0:
                 (adj_list.setdefault(v, [])).append((v+1, 1))
-                (adj_list.setdefault(v, [])).append((v + self.n, 1))
+            (adj_list.setdefault(v, [])).append((v + self.n, 1))
 
             # rechter Rand
             if not v % self.n == 1:
@@ -211,8 +152,8 @@ class KI(object):
                     self.nodes[v].key = self.nodes[u].key + w
                     heapq.heapify(self.heap)
                     self.nodes[v].parent = self.nodes[u]
-        return ' '.join(str(n.key) for n in self.nodes)
-
+                    ass = ' '.join(str(n.key) for n in self.nodes)
+        #return a
 
 #    def __str__(self):
  #       self.shortest_path_potentials(self.adj_list)
