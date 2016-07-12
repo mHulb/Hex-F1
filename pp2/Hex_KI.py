@@ -91,14 +91,19 @@ class HexKI:
     def calculateMove(self):
         """
         """
+        # Kann spaeter geloescht werden, ist nur zum print da
         show_board = [["#" for i in range(self.n)] for j in range(self.m)]
-
+        # Minimum fuer a intialisieren
+        mini = 1000
         mo = {}
         nodes = self.nodes
-        edges = self.edges
+
 
         # Nachfolgende ist zum Speichern der besten moves gedacht
         # Wenn man mit besseren moves anfängt, spart man sich angeblich zeit
+
+        # Beim ersten Zug werden nur das mitlere quadrat durchsucht
+        # muss noch angepasst werden mit swap später
         if self.first_move == 1:
             self.moves = {}
             for i in range(1, self.n - 1):
@@ -106,6 +111,8 @@ class HexKI:
                     (self.moves.setdefault(1, [])).append((i, j))
 
             self.first_move += 1
+
+        # Beim zweiten move werden alle fehlenden moves hinzugefuegt
         elif self.first_move == 2:
             for i in range(self.n):
                 for j in range(self.m):
@@ -113,16 +120,21 @@ class HexKI:
                         (self.moves.setdefault(1, [])).append((i, j))
             self.first_move += 1
 
-        mini = 1000
-
+        # Sortiere Moves nach a wert, so das er mit dem kleinsten a
+        # beginnt(kleines a -> guter move)
         for val in sorted(self.moves):
             for move in self.moves[val]:
                 if nodes[move[0]][move[1]].colour == 0:
+                    # Zum probieren des jeweiligen moves muss die Farbe geändert werden
+                    # Daher tmporere nodes
                     nodes[move[0]][move[1]].change_colour(self.player_colour)
                     a = self.max_value(nodes,float("inf"),-float("inf"), 1 )
+                    # wieder zurueck setzten, damit es beim naechsten move nicht
+                    # stoert
                     nodes[move[0]][move[1]].change_colour(0)
                     nodes[move[0]][move[1]].pot = 1
 
+                    # Moves für die naechste Runde abspeichern
                     (mo.setdefault(a, [])).append((move[0], move[1]))
 
                     show_board[move[0]][move[1]]  = round(a,3)
@@ -130,9 +142,9 @@ class HexKI:
                         mini = a
                         self.best_move = move
         self.moves = mo
-        print(' \n'.join('       '.join(str(a) for a in row) for row in show_board ))
+        # Ausgabe der a Werte in Matrixform
+        print(' \n'.join('       '.join(str(a) for a in row) for row in show_board))
 
-        #self.best_move = self.__random_move()
         return True
 
     def evaluate(self, nodes=None):
