@@ -32,6 +32,7 @@ class HexKI:
         # Zum zeitesten
         self.eval_number = 0
         self.eval_times = []
+        self.board_scores = {}
 
     def __make_edges(self):
         edges = []
@@ -169,13 +170,23 @@ class HexKI:
         return True
 
     def evaluate(self, nodes=None):
-        self.eval_number += 1
         t0 = time.clock()
         """
         Evaluates a board
         """
         if not nodes:
             nodes = self.nodes
+
+        key = "".join(["".join(
+            [str(n.colour) for n in row]) for row in nodes])
+
+        value = self.board_scores.get(key)
+        if value:
+            # print(value)
+            self.eval_times.append(time.clock() - t0)
+            return value
+
+        self.eval_number += 1
         # if not edges:
         #    edges = self.edges
         start_node = self.boundaries[self.player_colour][0]
@@ -195,9 +206,12 @@ class HexKI:
         # edge case division by zero
         self.eval_times.append(time.clock() - t0)
         if value_2 == 0:
-            return float("inf")
+            value = float("inf")
         else:
-            return value_1 / value_2
+            value = value_1 / value_2
+
+        self.board_scores[key] = value
+        return value
 
     def nextMove(self):
         """
