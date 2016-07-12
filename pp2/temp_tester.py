@@ -2,7 +2,7 @@ from Hex_KI import HexKI
 from Hex import HexBoard
 import time
 
-m, n = 5, 5
+m, n = 4, 4
 testKI = HexKI(m, n)
 board = HexBoard(m, n)
 player_colour = 1
@@ -20,7 +20,8 @@ while not board.finished():
     t0 = time.clock()
     testKI.calculateMove()
     calculated_move = testKI.nextMove()
-    print("evaluations: {} boards".format(testKI.eval_number))
+    print("Evaluations: {} boards".format(testKI.eval_number))
+    print("Average time per evaluation: {} sec".format(testKI.eval_time_average))
     print("Calculation for move {1} took {0} seconds.".format(
         time.clock() - t0, calculated_move))
     board.receiveMove(calculated_move, player_colour)
