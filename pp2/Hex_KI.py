@@ -183,7 +183,7 @@ class HexKI:
         value = self.board_scores.get(key)
         if value:
             # print(value)
-            self.eval_times.append(time.clock() - t0)
+            # self.eval_times.append(time.clock() - t0)
             return value
 
         self.eval_number += 1
