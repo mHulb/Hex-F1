@@ -1,5 +1,6 @@
 from helpers import AINode, Edge, Dijkstra
 import random
+import time
 
 
 class HexKI:
@@ -27,6 +28,9 @@ class HexKI:
         self.best_move = None
         self.player_colour = None
         self.opponent_colour = None
+
+        # Zum zeitesten
+        self.eval_number = 0
 
     def __make_edges(self):
         edges = []
@@ -89,6 +93,7 @@ class HexKI:
         pass
 
     def calculateMove(self):
+        self.eval_number = 0    # zum testen
         """
         """
         # Kann spaeter geloescht werden, ist nur zum print da
@@ -101,7 +106,7 @@ class HexKI:
         # Nachfolgende ist zum Speichern der besten moves gedacht
         # Wenn man mit besseren moves anfängt, spart man sich angeblich zeit
 
-        # Beim ersten Zug werden nur das mitlere quadrat durchsucht
+        # Beim ersten Zug werden nur das mittlere quadrat durchsucht
         # muss noch angepasst werden mit swap später
         if self.move_number == 1:
             self.moves = {}
@@ -111,6 +116,7 @@ class HexKI:
                     (self.moves.setdefault(1, [])).append((i, j))
 
             self.move_number += 1
+            print(self.moves)
 
         # Beim zweiten move werden alle fehlenden moves hinzugefuegt
         elif self.move_number == 2:
@@ -119,6 +125,7 @@ class HexKI:
                     if i not in range(1, self.n - 1) or j not in range(1, self.m - 1):
                         (self.moves.setdefault(1, [])).append((i, j))
             self.move_number += 1
+            print(self.moves)
 
         # Sortiere Moves nach a wert, so dass er mit dem kleinsten a
         # beginnt (kleines a -> guter move)
@@ -159,6 +166,7 @@ class HexKI:
         return True
 
     def evaluate(self, nodes=None):
+        self.eval_number += 1
         """
         Evaluates a board
         """
