@@ -106,6 +106,7 @@ class HexKI:
         # muss noch angepasst werden mit swap später
         if self.first_move == 1:
             self.moves = {}
+            # noch in list comprehension
             for i in range(1, self.n - 1):
                 for j in range(1,self.m-1):
                     (self.moves.setdefault(1, [])).append((i, j))
@@ -123,12 +124,18 @@ class HexKI:
         # Sortiere Moves nach a wert, so das er mit dem kleinsten a
         # beginnt(kleines a -> guter move)
         for val in sorted(self.moves):
-            for move in self.moves[val]:
+            if val == 0 and len(self.moves[val]) > 1:
+                moves = [self.moves[val]]
+            else:
+                moves = self.moves
+
+            for move in moves[val]:
                 if nodes[move[0]][move[1]].colour == 0:
                     # Zum probieren des jeweiligen moves muss die Farbe geändert werden
                     # Daher tmporere nodes
                     nodes[move[0]][move[1]].change_colour(self.player_colour)
-                    a = self.max_value(nodes,float("inf"),-float("inf"), 1 )
+                    # theoretisch muesste hier min_value aufgerufen werden
+                    a = self.min_value(nodes, float("inf"), -float("inf"), 2)
                     # wieder zurueck setzten, damit es beim naechsten move nicht
                     # stoert
                     nodes[move[0]][move[1]].change_colour(0)
@@ -137,7 +144,7 @@ class HexKI:
                     # Moves für die naechste Runde abspeichern
                     (mo.setdefault(a, [])).append((move[0], move[1]))
 
-                    show_board[move[0]][move[1]]  = round(a,3)
+                    show_board[move[0]][move[1]] = round(a,3)
                     if a < mini:
                         mini = a
                         self.best_move = move
@@ -207,16 +214,18 @@ class HexKI:
 
         if (depth == 0):
             return self.evaluate(nodes)
-        moves = [(i, j) for i in range(self.n) for j in range(self.m)]
-        for move in moves:
-            if nodes[move[0]][move[1]].colour == 0:
-                nodes[move[0]][move[1]].change_colour(self.player_colour)
+        #moves = [(i, j) for i in range(self.n) for j in range(self.m)]
+        #for move in moves:
+        for val in sorted(self.moves):
+            for move in self.moves[val]:
+                if nodes[move[0]][move[1]].colour == 0:
+                    nodes[move[0]][move[1]].change_colour(self.player_colour)
 
 
-                a = min(a, self.min_value(nodes, a, b, depth - 1))
+                    a = min(a, self.min_value(nodes, a, b, depth - 1))
 
-                nodes[move[0]][move[1]].change_colour(0)
-                nodes[move[0]][move[1]].pot = 1
+                    nodes[move[0]][move[1]].change_colour(0)
+                    nodes[move[0]][move[1]].pot = 1
 
 
         # this ia a cutoff point
@@ -227,14 +236,16 @@ class HexKI:
     def min_value(self, nodes, a, b, depth):
         if (depth == 0):
             return self.evaluate(nodes)
-        moves = [(i, j) for i in range(self.n) for j in range(self.m)]
-        for move in moves:
-            if nodes[move[0]][move[1]].colour == 0:
-                nodes[move[0]][move[1]].change_colour(self.opponent_colour)
+        #moves = [(i, j) for i in range(self.n) for j in range(self.m)]
+        #for move in moves:
+        for val in sorted(self.moves):
+            for move in self.moves[val]:
+                if nodes[move[0]][move[1]].colour == 0:
+                    nodes[move[0]][move[1]].change_colour(self.opponent_colour)
 
-                b = max(b, self.max_value(nodes, a, b, depth - 1))
-                nodes[move[0]][move[1]].change_colour(0)
-                nodes[move[0]][move[1]].pot = 1
+                    b = max(b, self.max_value(nodes, a, b, depth - 1))
+                    nodes[move[0]][move[1]].change_colour(0)
+                    nodes[move[0]][move[1]].pot = 1
 
 
         # this is a cutoff point

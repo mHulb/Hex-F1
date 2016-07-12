@@ -1,4 +1,7 @@
 from Hex_KI import HexKI
+import time
+
+
 
 testKI = HexKI(4, 4)
 testKI.player_colour = 1
@@ -22,7 +25,9 @@ testKI.opponent_colour = 2
 # testKI.nextMove()
 for i in range(10):
     testKI.receiveMove(testKI.random_move())
+    t0 = time.clock()
     testKI.calculateMove()
+    print(time.clock() - t0)
     testKI.nextMove()
 
 
