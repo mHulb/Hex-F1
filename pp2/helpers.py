@@ -103,7 +103,13 @@ class AINode(Node):
 
         # potential for dijkstra
         self.pot = float("inf")
+
+
+        # moeglicherweise unnoetig die nochmal extra zu speichern
+        # vllt aber auch nuetzlich spaeter
+
         # saves adjacent edges for easy access
+
         self.adjacent_edges = []
 
     def change_colour(self, colour):
@@ -187,8 +193,8 @@ class Dijkstra():
     """
 
     # ! kann bestimmt noch optimiert werden, so dass wir nicht immer
-    # ! immer alle nodes durchsuchen müssen
-    def __init__(self, nodes, edges, root, target):
+    # ! immer alle nodes durchsuchen muessen
+    def __init__(self, nodes, root, target):
         player_num = root.colour
         heap = [root, target]
         # convert all nodes to one single list in heap
@@ -207,8 +213,17 @@ class Dijkstra():
                 if v.pot > u.pot + edge.weight(player_num):
                     v.pot = u.pot + edge.weight(player_num)
             heapq.heapify(heap)
+        n = len(nodes)
+        show = [[n.pot for n in row] for row in nodes]
+        tmp = []
+        for i in range(n):
+            if player_num == 1:
+                tmp.append(nodes[n-1][i].pot)
+            else:
+                tmp.append(nodes[i][n-1].pot)
+        val = tmp.count(max(tmp))
 
-        self.value = target.pot
+        self.value = min(tmp)
 
 
 

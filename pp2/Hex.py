@@ -4,7 +4,7 @@ import math
 import random
 from helpers import Node
 from time import sleep
-from Kis import KI
+from Hex_KI import HexKI
 
 """
 Hex Game
@@ -40,7 +40,7 @@ COLOR_THEMES = {"standard":
                 }
 
 
-class HexGui(object):
+class HexGui:
     """
     HexGui: Creates the GUI for the Hex Game.
     """
