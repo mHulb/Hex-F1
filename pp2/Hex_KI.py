@@ -31,6 +31,7 @@ class HexKI:
 
         # Zum zeitesten
         self.eval_number = 0
+        self.eval_times = []
 
     def __make_edges(self):
         edges = []
@@ -94,6 +95,7 @@ class HexKI:
 
     def calculateMove(self):
         self.eval_number = 0    # zum testen
+        self.eval_times = []
         """
         """
         # Kann spaeter geloescht werden, ist nur zum print da
@@ -163,10 +165,12 @@ class HexKI:
         print(' \n'.join(
             '       '.join(str(a) for a in row) for row in show_board))
 
+        self.eval_time_average = sum(self.eval_times) / len(self.eval_times)
         return True
 
     def evaluate(self, nodes=None):
         self.eval_number += 1
+        t0 = time.clock()
         """
         Evaluates a board
         """
@@ -189,6 +193,7 @@ class HexKI:
             return 0 """
 
         # edge case division by zero
+        self.eval_times.append(time.clock() - t0)
         if value_2 == 0:
             return float("inf")
         else:
