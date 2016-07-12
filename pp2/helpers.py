@@ -223,7 +223,7 @@ class Dijkstra():
                 tmp.append(nodes[i][n-1].pot)
         val = tmp.count(max(tmp))
 
-        self.value = min(tmp)
+        self.value = min(tmp)/val
 
 
 

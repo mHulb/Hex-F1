@@ -20,6 +20,7 @@ while not board.finished():
     t0 = time.clock()
     testKI.calculateMove()
     calculated_move = testKI.nextMove()
+    print("evaluations: {} boards".format(testKI.eval_number))
     print("Calculation for move {1} took {0} seconds.".format(
         time.clock() - t0, calculated_move))
     board.receiveMove(calculated_move, player_colour)
